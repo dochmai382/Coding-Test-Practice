@@ -14,7 +14,7 @@ class Main {
             int result1 = a + b - c;
             sb.append(result1).append("\n");
             
-            int result2 = Integer.parseInt(a + "" + b) - c;
+            int result2 = Integer.parseInt(String.valueOf(a) + String.valueOf(b)) - c;
             sb.append(result2).append("\n");
             
             bw.write(sb.toString());
