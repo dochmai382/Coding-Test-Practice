@@ -1,69 +1,80 @@
-import java.util.*;
 import java.io.*;
+import java.util.*;
 
-class Main {
-    private static int N, M;
-    private static int[][] maze;
-    private static int[][] distance;
-    
-    public static void main(String[] args) throws IOException {
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))) {
+class Solution {
 
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            N = Integer.parseInt(st.nextToken());
-            M = Integer.parseInt(st.nextToken());
-            
-            maze = new int[N][M];
-            for (int i = 0; i < N; i++) {
-                String line = br.readLine();
-                for (int j = 0; j < M; j++) {
-                    maze[i][j] = line.charAt(j) - '0';
-                }
-            }
+    class Point {
+        int row;
+        int col;
 
-            distance = new int[N][M];
-            bfs(0, 0);
-            
-            bw.write(String.valueOf(distance[N-1][M-1]));
+        Point(int row, int col) {
+            this.row = row;
+            this.col = col;
         }
     }
+    
+    private int N;
+    private int M;
+    private int[][] map;
+    private int[][] distance;
 
-    private static void bfs(int y, int x) {
-        Queue<Point> queue = new LinkedList<>();
+    private final int[] DY = {-1, 1, 0, 0};
+    private final int[] DX = {0, 0, -1, 1};
         
-        int[] dy = {-1, 1, 0, 0};
-        int[] dx = {0, 0, -1, 1};
+    public void input(BufferedReader br) throws IOException {
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
 
-        queue.add(new Point(y, x));
-        distance[y][x] = 1;
+        map = new int[N][M];
+        for (int i = 0; i < N; i++) {
+            String input = br.readLine();
+            for (int j = 0; j < M; j++) {
+                map[i][j] = input.charAt(j) - '0';
+            }
+        }
+        distance = new int[N][M];
+    }
 
-        while(!queue.isEmpty()) {
-            Point current = queue.poll();
-            int currentY = current.y;
-            int currentX = current.x;
+    private void bfs(int r, int c) {        
+        Queue<Point> q = new LinkedList<>();
+        q.add(new Point(r, c));
+        distance[r][c] = 1;
+
+        while(!q.isEmpty()) {
+            Point current = q.poll();
+            int currentR = current.row;
+            int currentC = current.col;
 
             for (int i = 0; i < 4; i++) {
-                int nextY = currentY + dy[i];
-                int nextX = currentX + dx[i];
+                int nextR = currentR + DY[i];
+                int nextC = currentC + DX[i];
 
-                if (nextY >= 0 && nextY < N && nextX >= 0 && nextX < M) {
-                    if (maze[nextY][nextX] == 1 && distance[nextY][nextX] == 0) {
-                        distance[nextY][nextX] = distance[currentY][currentX] + 1;
-                        queue.add(new Point(nextY, nextX));
+                if (nextR >= 0 && nextR < N && nextC >= 0 && nextC < M) {
+                    if (map[nextR][nextC] == 1 && distance[nextR][nextC] == 0) {
+                        distance[nextR][nextC] = distance[currentR][currentC] + 1;
+                        q.add(new Point(nextR, nextC));
                     }
                 }
             }
         }
     }
+
+    public String getResult() {
+        bfs(0, 0);
+        return String.valueOf(distance[N-1][M-1]);
+    }
 }
 
-class Point {
-    int y;
-    int x;
-
-    public Point(int y, int x) {
-        this.y = y;
-        this.x = x;
+class Main {
+    public static void main(String[] args) throws IOException {
+        try (
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))
+        ) {
+            Solution sol = new Solution();
+            sol.input(br);
+            bw.write(sol.getResult());
+        }
     }
 }
